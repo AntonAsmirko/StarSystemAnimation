@@ -18,9 +18,17 @@ class MainActivity : AppCompatActivity() {
                     displaySecondsTextView.text.toString().toLong() * 1000L
             }
         }
+        val decreaseButton = findViewById<ImageButton>(R.id.decrease_button).apply {
+            setOnClickListener {
+                displaySecondsTextView.apply { text =
+                    (if (text.toString().toInt() - 1 > 0) text.toString()
+                        .toInt() - 1 else 0).toString()
+                }
+            }
+        }
         val increaseByFiveButton = findViewById<ImageButton>(R.id.increase_by_five_button).apply {
             setOnClickListener {
-                displaySecondsTextView.apply { text = (text.toString().toInt() + 5).toString() }
+                displaySecondsTextView.apply { text = (text.toString().toInt() + 1).toString() }
             }
         }
     }
