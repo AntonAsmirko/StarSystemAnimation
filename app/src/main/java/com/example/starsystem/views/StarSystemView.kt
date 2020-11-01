@@ -13,6 +13,15 @@ import kotlin.math.sin
 
 class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
+    var animationDuration = 5000
+        set(value){
+            field = value
+            playAnimation = true
+        }
+
+    var playAnimation = false
+    var startAnimationTime = -1L
+
     private val paint = Paint().apply {
         color = Color.RED
         isAntiAlias = true
@@ -47,7 +56,10 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             this.bottom / 2 + sunYSize / 2
         )
         sun.draw(canvas!!)
-        planets.forEach { it.draw(canvas) }
+        if(playAnimation && startAnimationTime == 0L){
+            startAnimationTime = System.currentTimeMillis()
+        }
+        planets.forEach { it.draw(canvas, true) }
         invalidate()
     }
 
@@ -77,7 +89,7 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         var centerX = -1
         var centerY = -1
 
-        fun draw(canvas: Canvas) {
+        fun draw(canvas: Canvas, makeMove: Boolean = false) {
             val angle = curAngle * Math.PI / 180
             val rotatedX =
                 cos(angle) * (positionX - centerX) - sin(angle) * (positionY - centerY) + centerX
@@ -90,7 +102,7 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
                 (rotatedY + ySize / 2).toInt()
             )
             if (curAngle >= 360f) curAngle = 0f
-            curAngle += rotationSpeed
+            if(makeMove) curAngle += rotationSpeed
             image.draw(canvas)
         }
     }
