@@ -25,41 +25,21 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         AppCompatResources.getDrawable(context, R.drawable.ic_planet_saturn_illustration_by_vexels)
     private val jupiter =
         AppCompatResources.getDrawable(context, R.drawable.ic_planet_jupiter_illustration_by_vexels)
-
-    private var saturnX = -1
-    private var saturnY = -1
-
-    private var jupiterX = -1
-    private var jupiterY = -1
-
-    private var curSaturnAngle = 0f
-    private var curJupiterAngle = 0f
-
-    private var prevTime = System.currentTimeMillis()
+    private val venus =
+        AppCompatResources.getDrawable(context, R.drawable.ic_planet_neptune_illustration_by_vexels)
 
     private val sunXSize = 180
     private val sunYSize = 180
 
-    private val saturnXSize = 100
-    private val saturnYSize = 100
-
-    private val jupiterXSize = 140
-    private val jupiterYSize = 140
-
     private val planets = mutableListOf(
-        Planet(saturn!!, 0f, 100, 100, 2f),
-        Planet(jupiter!!, 0f, 140, 140, 1.5f)
+        Planet(saturn!!, 0f, 100, 100, 2f, 500),
+        Planet(jupiter!!, 0f, 140, 140, 1.5f, 370),
+        Planet(venus!!, 0f, 70, 70, 2.2f, 200)
     )
 
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (saturnX == -1) saturnX = this.right / 2 + 500
-        if (saturnY == -1) saturnY = this.bottom / 2
-
-        if (jupiterX == -1) jupiterX = this.right / 2 + 370
-        if (jupiterY == -1) jupiterY = this.bottom / 2
-
         sun!!.setBounds(
             this.right / 2 - sunXSize / 2,
             this.bottom / 2 - sunYSize / 2,
@@ -67,51 +47,20 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             this.bottom / 2 + sunYSize / 2
         )
         sun.draw(canvas!!)
-
-        val saturnAngle = curSaturnAngle * Math.PI / 180
-        val rotatedSaturnX =
-            cos(saturnAngle) * (saturnX - this.right / 2) - sin(saturnAngle) * (saturnY - this.bottom / 2) + this.right / 2
-        val rotatedSaturnY =
-            sin(saturnAngle) * (saturnX - this.right / 2) + cos(saturnAngle) * (saturnY - this.bottom / 2) + this.bottom / 2
-        saturn!!.setBounds(
-            (rotatedSaturnX - saturnXSize / 2).toInt(),
-            (rotatedSaturnY - saturnYSize / 2).toInt(),
-            (rotatedSaturnX + saturnXSize / 2).toInt(),
-            (rotatedSaturnY + saturnYSize / 2).toInt()
-        )
-        if (curSaturnAngle >= 360f) {
-            curSaturnAngle = 0f
-        }
-        val curTime = System.currentTimeMillis()
-        if (curTime - prevTime >= 200) {
-            curSaturnAngle += 2f
-        }
-        saturn.draw(canvas)
-
-        val jupiterAngle = curJupiterAngle * Math.PI / 180
-        val rotatedJupiterX =
-            cos(jupiterAngle) * (jupiterX - this.right / 2) - sin(jupiterAngle) * (jupiterY - this.bottom / 2) + this.right / 2
-        val rotatedJupiterY =
-            sin(jupiterAngle) * (jupiterX - this.right / 2) + cos(jupiterAngle) * (jupiterY - this.bottom / 2) + this.bottom / 2
-        jupiter!!.setBounds(
-            (rotatedJupiterX - jupiterXSize / 2).toInt(),
-            (rotatedJupiterY - jupiterYSize / 2).toInt(),
-            (rotatedJupiterX + jupiterXSize / 2).toInt(),
-            (rotatedJupiterY + jupiterYSize / 2).toInt()
-        )
-        if (curJupiterAngle >= 360f) {
-            curJupiterAngle = 0f
-        }
-        if (curTime - prevTime >= 200) {
-            curJupiterAngle += 1.5f
-        }
-        jupiter!!.draw(canvas)
-
+        planets.forEach { it.draw(canvas) }
         invalidate()
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        planets.forEach {
+            it.apply {
+                centerX = this@StarSystemView.right / 2
+                centerY = this@StarSystemView.bottom / 2
+                positionX = centerX + offset
+                positionY = centerY
+            }
+        }
     }
 
     private class Planet(
@@ -119,7 +68,8 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         private var curAngle: Float,
         private val xSize: Int,
         private val ySize: Int,
-        private val rotationSpeed: Float
+        private val rotationSpeed: Float,
+        val offset: Int
     ) {
 
         var positionX = -1
