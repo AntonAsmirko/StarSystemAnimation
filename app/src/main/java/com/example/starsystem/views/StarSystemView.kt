@@ -13,13 +13,13 @@ import kotlin.math.sin
 
 class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    var animationDuration = 5000
-        set(value){
+    var animationDuration = 0L
+        set(value) {
             field = value
-            playAnimation = true
+            startAnimationTime = System.currentTimeMillis()
+            invalidate()
         }
 
-    var playAnimation = false
     var startAnimationTime = -1L
 
     private val paint = Paint().apply {
@@ -56,11 +56,8 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             this.bottom / 2 + sunYSize / 2
         )
         sun.draw(canvas!!)
-        if(playAnimation && startAnimationTime == 0L){
-            startAnimationTime = System.currentTimeMillis()
-        }
-        planets.forEach { it.draw(canvas, true) }
-        invalidate()
+        val currentTime = System.currentTimeMillis()
+        planets.forEach { it.draw(canvas, currentTime - startAnimationTime < animationDuration) }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -75,7 +72,7 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         }
     }
 
-    private class Planet(
+    private inner class Planet(
         private val image: Drawable,
         private var curAngle: Float,
         private val xSize: Int,
@@ -102,8 +99,9 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
                 (rotatedY + ySize / 2).toInt()
             )
             if (curAngle >= 360f) curAngle = 0f
-            if(makeMove) curAngle += rotationSpeed
+            if (makeMove) curAngle += rotationSpeed
             image.draw(canvas)
+            invalidate()
         }
     }
 }

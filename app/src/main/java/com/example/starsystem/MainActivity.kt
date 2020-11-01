@@ -13,7 +13,10 @@ class MainActivity : AppCompatActivity() {
         val starSystemView = findViewById<StarSystemView>(R.id.star_system_animation)
         val displaySecondsTextView = findViewById<TextView>(R.id.display_seconds)
         val playButton = findViewById<ImageButton>(R.id.play_button).apply {
-            starSystemView.animationDuration = displaySecondsTextView.text.toString().toInt()
+            setOnClickListener {
+                starSystemView.animationDuration =
+                    displaySecondsTextView.text.toString().toLong() * 1000L
+            }
         }
         val increaseByFiveButton = findViewById<ImageButton>(R.id.increase_by_five_button).apply {
             setOnClickListener {
