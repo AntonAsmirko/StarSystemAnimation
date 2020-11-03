@@ -1,6 +1,8 @@
 package com.example.starsystem.views
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -11,14 +13,23 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
+@SuppressLint("CustomViewStyleable")
 class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-
     var animationDuration = 0L
         set(value) {
             field = value
             startAnimationTime = System.currentTimeMillis()
             invalidate()
         }
+
+    init {
+        val a: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.StarSystem)
+        try {
+            animationDuration = a.getInt(R.styleable.StarSystem_initialDuration, 0).toLong()
+        } finally {
+            a.recycle()
+        }
+    }
 
     var startAnimationTime = -1L
 
@@ -28,8 +39,8 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         isFilterBitmap = true
         isDither = true
     }
-    private val sun =
-        AppCompatResources.getDrawable(context, R.drawable.ic_sun_star_illustration_by_vexels)
+//    private val sun =
+//        AppCompatResources.getDrawable(context, R.drawable.ic_sun_star_illustration_by_vexels)
     private val saturn =
         AppCompatResources.getDrawable(context, R.drawable.ic_planet_saturn_illustration_by_vexels)
     private val jupiter =
@@ -49,15 +60,15 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        sun!!.setBounds(
-            this.right / 2 - sunXSize / 2,
-            this.bottom / 2 - sunYSize / 2,
-            this.right / 2 + sunXSize / 2,
-            this.bottom / 2 + sunYSize / 2
-        )
-        sun.draw(canvas!!)
+//        sun!!.setBounds(
+//            this.right / 2 - sunXSize / 2,
+//            this.bottom / 2 - sunYSize / 2,
+//            this.right / 2 + sunXSize / 2,
+//            this.bottom / 2 + sunYSize / 2
+//        )
+//        sun.draw(canvas!!)
         val currentTime = System.currentTimeMillis()
-        planets.forEach { it.draw(canvas, currentTime - startAnimationTime < animationDuration) }
+        planets.forEach { it.draw(canvas!!, currentTime - startAnimationTime < animationDuration) }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
