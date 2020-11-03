@@ -1,8 +1,13 @@
 package com.example.starsystem
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.animation.Animation
+import android.view.animation.AnticipateInterpolator
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.ImageButton
@@ -17,31 +22,30 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val roundedCornersPurple =
-        ContextCompat.getDrawable(this, R.drawable.rounded_top_corners)
+    private lateinit var roundedCornersPurple: Drawable
 
-    private val roundedCornersRed =
-        ContextCompat.getDrawable(this, R.drawable.drawable_rounded_corners_red)
+    private lateinit var roundedCornersRed: Drawable
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private var isSunAnimationInfinite = false
+
+    private val anticipateInterpolator = AnticipateInterpolator()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val rotate = RotateAnimation(
-            0f,
-            360f,
-            Animation.RELATIVE_TO_SELF,
-            0.5f,
-            Animation.RELATIVE_TO_SELF,
-            0.5f
-        ).apply { interpolator = LinearInterpolator() }
+        roundedCornersPurple = ContextCompat.getDrawable(this, R.drawable.rounded_top_corners)!!
+        roundedCornersRed =
+            ContextCompat.getDrawable(this, R.drawable.drawable_rounded_corners_red)!!
+
         display_seconds.text = star_system_animation.animationDuration.toString()
+
+        val starSystemView = findViewById<StarSystemView>(R.id.star_system_animation)
+
         play_button.apply {
             setOnClickListener {
                 val animDuration = display_seconds.text.toString().toLong() * 1000L
                 star_system_animation.animationDuration = animDuration
-                rotate.duration = animDuration
-                sun_image_view.startAnimation(rotate)
+                runAnimation(animDuration)
             }
         }
         decrease_button.apply {
@@ -62,7 +66,20 @@ class MainActivity : AppCompatActivity() {
             make_infinite_button.background =
                 if (star_system_animation.isInfiniteAnimation) roundedCornersPurple else roundedCornersRed
             star_system_animation.apply { isInfiniteAnimation = !isInfiniteAnimation }
+            isSunAnimationInfinite = !isSunAnimationInfinite
+            if (isSunAnimationInfinite) {
+                runAnimation(5_000L)
+            }
         }
         if (star_system_animation.animationDuration != 0L) play_button.performClick()
+    }
+
+    private fun runAnimation(duration: Long) {
+        ObjectAnimator.ofFloat(sun_image_view, View.ROTATION, 0f, 360f).apply {
+            repeatCount = Animation.INFINITE
+            interpolator = anticipateInterpolator
+            this.duration = duration
+            start()
+        }
     }
 }
