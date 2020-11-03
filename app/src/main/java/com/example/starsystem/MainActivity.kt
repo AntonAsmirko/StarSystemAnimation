@@ -39,13 +39,18 @@ class MainActivity : AppCompatActivity() {
 
         display_seconds.text = star_system_animation.animationDuration.toString()
 
-        val starSystemView = findViewById<StarSystemView>(R.id.star_system_animation)
+        val animator = ObjectAnimator.ofFloat(sun_image_view, View.ROTATION, 0f, 360f).apply {
+            interpolator = anticipateInterpolator
+        }
 
         play_button.apply {
             setOnClickListener {
                 val animDuration = display_seconds.text.toString().toLong() * 1000L
                 star_system_animation.animationDuration = animDuration
-                runAnimation(animDuration)
+                animator.apply {
+                    duration = animDuration
+                    start()
+                }
             }
         }
         decrease_button.apply {
@@ -68,18 +73,14 @@ class MainActivity : AppCompatActivity() {
             star_system_animation.apply { isInfiniteAnimation = !isInfiniteAnimation }
             isSunAnimationInfinite = !isSunAnimationInfinite
             if (isSunAnimationInfinite) {
-                runAnimation(5_000L)
+                animator.apply {
+                    repeatCount = Animation.INFINITE
+                    duration = 5_000L
+                    start()
+                }
+                animator.repeatCount = 0
             }
         }
         if (star_system_animation.animationDuration != 0L) play_button.performClick()
-    }
-
-    private fun runAnimation(duration: Long) {
-        ObjectAnimator.ofFloat(sun_image_view, View.ROTATION, 0f, 360f).apply {
-            repeatCount = Animation.INFINITE
-            interpolator = anticipateInterpolator
-            this.duration = duration
-            start()
-        }
     }
 }
