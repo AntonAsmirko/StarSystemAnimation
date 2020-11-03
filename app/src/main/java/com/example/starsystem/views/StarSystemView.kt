@@ -15,6 +15,9 @@ import kotlin.math.sin
 
 @SuppressLint("CustomViewStyleable")
 class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+
+    var isInfiniteAnimation = false
+
     var animationDuration = 0L
         set(value) {
             field = value
@@ -39,7 +42,8 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         isFilterBitmap = true
         isDither = true
     }
-//    private val sun =
+
+    //    private val sun =
 //        AppCompatResources.getDrawable(context, R.drawable.ic_sun_star_illustration_by_vexels)
     private val saturn =
         AppCompatResources.getDrawable(context, R.drawable.ic_planet_saturn_illustration_by_vexels)
@@ -68,7 +72,12 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
 //        )
 //        sun.draw(canvas!!)
         val currentTime = System.currentTimeMillis()
-        planets.forEach { it.draw(canvas!!, currentTime - startAnimationTime < animationDuration) }
+        planets.forEach {
+            it.draw(
+                canvas!!,
+                currentTime - startAnimationTime < animationDuration || isInfiniteAnimation
+            )
+        }
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

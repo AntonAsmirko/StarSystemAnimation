@@ -1,5 +1,6 @@
 package com.example.starsystem
 
+import android.os.Build
 import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
@@ -7,16 +8,25 @@ import android.view.animation.RotateAnimation
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.starsystem.views.StarSystemView
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+
+    private val roundedCornersPurple =
+        ContextCompat.getDrawable(this, R.drawable.rounded_top_corners)
+
+    private val roundedCornersRed =
+        ContextCompat.getDrawable(this, R.drawable.drawable_rounded_corners_red)
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val starSystemView = findViewById<StarSystemView>(R.id.star_system_animation)
-        val displaySecondsTextView = findViewById<TextView>(R.id.display_seconds)
         val rotate = RotateAnimation(
             0f,
             360f,
@@ -25,30 +35,34 @@ class MainActivity : AppCompatActivity() {
             Animation.RELATIVE_TO_SELF,
             0.5f
         ).apply { interpolator = LinearInterpolator() }
-        val sunImgView = findViewById<ImageView>(R.id.sun_image_view)
-        displaySecondsTextView.text = starSystemView.animationDuration.toString()
-        val playButton = findViewById<ImageButton>(R.id.play_button).apply {
+        display_seconds.text = star_system_animation.animationDuration.toString()
+        play_button.apply {
             setOnClickListener {
-                val animDuration = displaySecondsTextView.text.toString().toLong() * 1000L
-                starSystemView.animationDuration = animDuration
+                val animDuration = display_seconds.text.toString().toLong() * 1000L
+                star_system_animation.animationDuration = animDuration
                 rotate.duration = animDuration
-                sunImgView.startAnimation(rotate)
+                sun_image_view.startAnimation(rotate)
             }
         }
-        val decreaseButton = findViewById<ImageButton>(R.id.decrease_button).apply {
+        decrease_button.apply {
             setOnClickListener {
-                displaySecondsTextView.apply {
+                display_seconds.apply {
                     text =
                         (if (text.toString().toInt() - 1 > 0) text.toString()
                             .toInt() - 1 else 0).toString()
                 }
             }
         }
-        val increaseByFiveButton = findViewById<ImageButton>(R.id.increase_by_five_button).apply {
+        increase_by_five_button.apply {
             setOnClickListener {
-                displaySecondsTextView.apply { text = (text.toString().toInt() + 1).toString() }
+                display_seconds.apply { text = (text.toString().toInt() + 1).toString() }
             }
         }
-        if (starSystemView.animationDuration != 0L) playButton.performClick()
+        make_infinite_button.setOnClickListener {
+            make_infinite_button.background =
+                if (star_system_animation.isInfiniteAnimation) roundedCornersPurple else roundedCornersRed
+            star_system_animation.apply { isInfiniteAnimation = !isInfiniteAnimation }
+        }
+        if (star_system_animation.animationDuration != 0L) play_button.performClick()
     }
 }
