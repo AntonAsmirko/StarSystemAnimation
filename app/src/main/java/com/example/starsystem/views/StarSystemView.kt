@@ -38,12 +38,13 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         )
     private val moon =
         AppCompatResources.getDrawable(context, R.drawable.ic_satelite_moon_illustration_by_vexels)
+    private val mars = AppCompatResources.getDrawable(context, R.drawable.ic_mars_planet_illustration_by_vexels)
 
     private val planets = mutableListOf(
         Planet(saturn!!, 0f, 90, 90, 2f, 550),
-        Planet(jupiter!!, 0f, 120, 120, 1.5f, 450),
-        Planet(venus!!, 0f, 50, 50, 2.2f, 360),
-        Planet(earth!!, 0f, 70, 70, 1.2f, 270)
+        Planet(jupiter!!, 0f, 120, 120, 1.5f, 420),
+        Planet(venus!!, 0f, 50, 50, 2.2f, 300),
+        Planet(earth!!, 0f, 70, 70, 1.2f, 200)
     )
 
     init {
@@ -56,6 +57,10 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         val earth = planets[3]
         planets.add(Planet(moon!!, 0f, 30, 30, 3f, 52).apply {
             parent = earth
+        })
+        val jupiter = planets[1]
+        planets.add(Planet(mars!!, 0f, 30, 30, 4f, 72).apply {
+            parent = jupiter
         })
     }
 
