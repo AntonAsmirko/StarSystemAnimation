@@ -25,6 +25,27 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             invalidate()
         }
 
+    private val saturn =
+        AppCompatResources.getDrawable(context, R.drawable.ic_planet_saturn_illustration_by_vexels)
+    private val jupiter =
+        AppCompatResources.getDrawable(context, R.drawable.ic_planet_jupiter_illustration_by_vexels)
+    private val venus =
+        AppCompatResources.getDrawable(context, R.drawable.ic_planet_neptune_illustration_by_vexels)
+    private val earth =
+        AppCompatResources.getDrawable(
+            context,
+            R.drawable.ic_earth_planet_illustration_earth_by_vexels
+        )
+    private val moon =
+        AppCompatResources.getDrawable(context, R.drawable.ic_satelite_moon_illustration_by_vexels)
+
+    private val planets = mutableListOf(
+        Planet(saturn!!, 0f, 90, 90, 2f, 550),
+        Planet(jupiter!!, 0f, 120, 120, 1.5f, 450),
+        Planet(venus!!, 0f, 50, 50, 2.2f, 360),
+        Planet(earth!!, 0f, 70, 70, 1.2f, 270)
+    )
+
     init {
         val a: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.StarSystem)
         try {
@@ -32,6 +53,10 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         } finally {
             a.recycle()
         }
+        val earth = planets[3]
+        planets.add(Planet(moon!!, 0f, 30, 30, 3f, 52).apply {
+            parent = earth
+        })
     }
 
     var startAnimationTime = -1L
@@ -43,34 +68,8 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         isDither = true
     }
 
-    //    private val sun =
-//        AppCompatResources.getDrawable(context, R.drawable.ic_sun_star_illustration_by_vexels)
-    private val saturn =
-        AppCompatResources.getDrawable(context, R.drawable.ic_planet_saturn_illustration_by_vexels)
-    private val jupiter =
-        AppCompatResources.getDrawable(context, R.drawable.ic_planet_jupiter_illustration_by_vexels)
-    private val venus =
-        AppCompatResources.getDrawable(context, R.drawable.ic_planet_neptune_illustration_by_vexels)
-
-    private val sunXSize = 180
-    private val sunYSize = 180
-
-    private val planets = mutableListOf(
-        Planet(saturn!!, 0f, 100, 100, 2f, 500),
-        Planet(jupiter!!, 0f, 140, 140, 1.5f, 370),
-        Planet(venus!!, 0f, 70, 70, 2.2f, 200)
-    )
-
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-//        sun!!.setBounds(
-//            this.right / 2 - sunXSize / 2,
-//            this.bottom / 2 - sunYSize / 2,
-//            this.right / 2 + sunXSize / 2,
-//            this.bottom / 2 + sunYSize / 2
-//        )
-//        sun.draw(canvas!!)
         val currentTime = System.currentTimeMillis()
         planets.forEach {
             it.draw(
@@ -84,10 +83,10 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         super.onLayout(changed, left, top, right, bottom)
         planets.forEach {
             it.apply {
-                centerX = this@StarSystemView.right / 2
-                centerY = this@StarSystemView.bottom / 2
-                positionX = centerX + offset
-                positionY = centerY
+                centerX = parent?.initPositionX ?: this@StarSystemView.right / 2
+                centerY = parent?.initPositionY ?: this@StarSystemView.bottom / 2
+                initPositionX = centerX + offset
+                initPositionY = centerY
             }
         }
     }
@@ -101,17 +100,23 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         val offset: Int
     ) {
 
-        var positionX = -1
-        var positionY = -1
+        var parent: Planet? = null
+
+        var initPositionX = -1
+        var initPositionY = -1
         var centerX = -1
         var centerY = -1
+        var curPositionX = -1
+        var curPositionY = -1
 
         fun draw(canvas: Canvas, makeMove: Boolean = false) {
             val angle = curAngle * Math.PI / 180
             val rotatedX =
-                cos(angle) * (positionX - centerX) - sin(angle) * (positionY - centerY) + centerX
+                cos(angle) * (initPositionX - centerX) - sin(angle) * (initPositionY - centerY) + centerX
             val rotatedY =
-                sin(angle) * (positionX - centerX) + cos(angle) * (positionY - centerY) + centerY
+                sin(angle) * (initPositionX - centerX) + cos(angle) * (initPositionY - centerY) + centerY
+            curPositionX = rotatedX.toInt()
+            curPositionY = rotatedY.toInt()
             image.setBounds(
                 (rotatedX - xSize / 2).toInt(),
                 (rotatedY - ySize / 2).toInt(),
@@ -120,6 +125,12 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             )
             if (curAngle >= 360f) curAngle = 0f
             if (makeMove) curAngle += rotationSpeed
+            if (parent != null) {
+                centerX = parent!!.curPositionX
+                centerY = parent!!.curPositionY
+                initPositionX = centerX + offset
+                initPositionY = centerY
+            }
             image.draw(canvas)
             invalidate()
         }

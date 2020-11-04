@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                     duration = 5_000L
                     start()
                 }
+            } else {
                 animator.repeatCount = 0
             }
         }
