@@ -33,6 +33,66 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val saturn = StarSystemView.Planet(
+            R.drawable.ic_planet_saturn_illustration_by_vexels,
+            0f,
+            90,
+            90,
+            2f,
+            550,
+            "SATURN"
+        )
+        val jupiter = StarSystemView.Planet(
+            R.drawable.ic_planet_jupiter_illustration_by_vexels,
+            0f,
+            120,
+            120,
+            1.5f,
+            420,
+            "JUPITER"
+        )
+        val neptune = StarSystemView.Planet(
+            R.drawable.ic_planet_neptune_illustration_by_vexels,
+            0f,
+            50,
+            50,
+            2.2f,
+            300,
+            "NEPTUNE"
+        )
+        val earth = StarSystemView.Planet(
+            R.drawable.ic_earth_planet_illustration_earth_by_vexels,
+            0f,
+            70,
+            70,
+            1.2f,
+            200,
+            "EARTH"
+        )
+        val moon = StarSystemView.Planet(
+            R.drawable.ic_satelite_moon_illustration_by_vexels,
+            0f,
+            30,
+            30,
+            3f,
+            52,
+            "MOON"
+        ).apply {
+            parent = earth
+        }
+        val mars = StarSystemView.Planet(
+            R.drawable.ic_mars_planet_illustration_by_vexels,
+            0f,
+            30,
+            30,
+            4f,
+            72,
+            "MARS"
+        ).apply {
+            parent = jupiter
+        }
+        star_system_animation.planets = listOf(saturn, neptune, jupiter, mars, earth, moon)
         roundedCornersPurple = ContextCompat.getDrawable(this, R.drawable.rounded_top_corners)!!
         roundedCornersRed =
             ContextCompat.getDrawable(this, R.drawable.drawable_rounded_corners_red)!!
