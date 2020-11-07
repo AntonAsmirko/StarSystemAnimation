@@ -2,5 +2,6 @@
 <resources>
     <declare-styleable name="StarSystem">
         <attr name="initialDuration" format="integer"/>
+        <attr name="isInfinite" format="boolean"/>
     </declare-styleable>
 </resources>

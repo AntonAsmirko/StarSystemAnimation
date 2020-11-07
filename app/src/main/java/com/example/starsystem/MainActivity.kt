@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         ).apply {
             parent = jupiter
         }
+        isSunAnimationInfinite = star_system_animation.isInfiniteAnimation
         star_system_animation.planets = listOf(saturn, neptune, jupiter, mars, earth, moon)
         roundedCornersPurple = ContextCompat.getDrawable(this, R.drawable.rounded_top_corners)!!
         roundedCornersRed =
@@ -127,21 +128,31 @@ class MainActivity : AppCompatActivity() {
                 display_seconds.apply { text = (text.toString().toInt() + 1).toString() }
             }
         }
-        make_infinite_button.setOnClickListener {
-            make_infinite_button.background =
-                if (star_system_animation.isInfiniteAnimation) roundedCornersPurple else roundedCornersRed
-            star_system_animation.apply { isInfiniteAnimation = !isInfiniteAnimation }
-            isSunAnimationInfinite = !isSunAnimationInfinite
-            if (isSunAnimationInfinite) {
-                animator.apply {
-                    repeatCount = Animation.INFINITE
-                    duration = 5_000L
-                    start()
+        make_infinite_button.apply {
+            background =
+                if (star_system_animation.isInfiniteAnimation) roundedCornersRed else roundedCornersPurple
+            setOnClickListener {
+                make_infinite_button.background =
+                    if (star_system_animation.isInfiniteAnimation) roundedCornersPurple else roundedCornersRed
+                star_system_animation.apply { isInfiniteAnimation = !isInfiniteAnimation }
+                isSunAnimationInfinite = !isSunAnimationInfinite
+                if (isSunAnimationInfinite) {
+                    animator.apply {
+                        repeatCount = Animation.INFINITE
+                        duration = 5_000L
+                        start()
+                    }
+                } else {
+                    animator.repeatCount = 0
                 }
-            } else {
-                animator.repeatCount = 0
             }
         }
-        if (star_system_animation.animationDuration != 0L) play_button.performClick()
+        if (star_system_animation.animationDuration != 0L && !star_system_animation.isInfiniteAnimation) play_button.performClick()
+        if(star_system_animation.isInfiniteAnimation)
+            animator.apply {
+                repeatCount = Animation.INFINITE
+                duration = 3_000L
+                start()
+            }
     }
 }

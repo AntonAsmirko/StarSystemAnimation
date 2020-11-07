@@ -42,6 +42,7 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         val a: TypedArray = context.obtainStyledAttributes(attrs, R.styleable.StarSystem)
         try {
             animationDuration = a.getInt(R.styleable.StarSystem_initialDuration, 0).toLong()
+            isInfiniteAnimation = a.getBoolean(R.styleable.StarSystem_isInfinite, false)
         } finally {
             a.recycle()
         }
@@ -119,9 +120,9 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             this.startAnimTime = startAnimTime
         }
 
-        constructor(superState: Parcel?) : super(superState){
+        constructor(superState: Parcel?) : super(superState) {
             val arrSize = superState!!.readInt()
-            this.namesOfThePlanets = Array(arrSize){"a"}
+            this.namesOfThePlanets = Array(arrSize) { "a" }
             superState.readStringArray(this.namesOfThePlanets)
             this.planets = mutableListOf()
             for (i in 0 until arrSize)

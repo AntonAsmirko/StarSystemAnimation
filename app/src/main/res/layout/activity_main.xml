@@ -23,7 +23,8 @@
             android:id="@+id/star_system_animation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:initialDuration="5" />
+            app:initialDuration="5"
+            app:isInfinite="true"/>
     </FrameLayout>
 
     <LinearLayout
