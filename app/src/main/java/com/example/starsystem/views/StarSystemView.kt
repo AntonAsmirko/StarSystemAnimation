@@ -67,8 +67,8 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
         super.onLayout(changed, left, top, right, bottom)
         planets?.forEach {
             it.apply {
-                centerX = parent?.initPositionX ?: this@StarSystemView.right / 2
-                centerY = parent?.initPositionY ?: this@StarSystemView.bottom / 2
+                centerX = parent?.initPositionX ?: (this@StarSystemView.right / 2).toFloat()
+                centerY = parent?.initPositionY ?: (this@StarSystemView.bottom / 2).toFloat()
                 initPositionX = centerX + offset
                 initPositionY = centerY
             }
@@ -174,12 +174,12 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             }
 
         var parent: Planet? = null
-        var initPositionX = -1
-        var initPositionY = -1
-        var centerX = -1
-        var centerY = -1
-        var curPositionX = -1
-        var curPositionY = -1
+        var initPositionX = -1f
+        var initPositionY = -1f
+        var centerX = -1f
+        var centerY = -1f
+        var curPositionX = -1f
+        var curPositionY = -1f
 
         constructor(parcel: Parcel) : this(
             parcel.readInt(),
@@ -191,12 +191,12 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             parcel.readString()!!
         ) {
             parent = parcel.readParcelable(Planet::class.java.classLoader)
-            initPositionX = parcel.readInt()
-            initPositionY = parcel.readInt()
-            centerX = parcel.readInt()
-            centerY = parcel.readInt()
-            curPositionX = parcel.readInt()
-            curPositionY = parcel.readInt()
+            initPositionX = parcel.readFloat()
+            initPositionY = parcel.readFloat()
+            centerX = parcel.readFloat()
+            centerY = parcel.readFloat()
+            curPositionX = parcel.readFloat()
+            curPositionY = parcel.readFloat()
         }
 
         private fun getRotateDrawable(
@@ -227,8 +227,8 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
                 cos(angle) * (initPositionX - centerX) - sin(angle) * (initPositionY - centerY) + centerX
             val rotatedY =
                 sin(angle) * (initPositionX - centerX) + cos(angle) * (initPositionY - centerY) + centerY
-            curPositionX = rotatedX.toInt()
-            curPositionY = rotatedY.toInt()
+            curPositionX = rotatedX.toFloat()
+            curPositionY = rotatedY.toFloat()
             image.setBounds(
                 (rotatedX - xSize / 2).toInt(),
                 (rotatedY - ySize / 2).toInt(),
@@ -263,12 +263,12 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             dest?.writeInt(offset)
             dest?.writeString(name)
             dest?.writeParcelable(parent, 0)
-            dest?.writeInt(initPositionX)
-            dest?.writeInt(initPositionY)
-            dest?.writeInt(centerX)
-            dest?.writeInt(centerY)
-            dest?.writeInt(curPositionX)
-            dest?.writeInt(curPositionY)
+            dest?.writeFloat(initPositionX)
+            dest?.writeFloat(initPositionY)
+            dest?.writeFloat(centerX)
+            dest?.writeFloat(centerY)
+            dest?.writeFloat(curPositionX)
+            dest?.writeFloat(curPositionY)
         }
 
         companion object CREATOR : Parcelable.Creator<Planet> {
