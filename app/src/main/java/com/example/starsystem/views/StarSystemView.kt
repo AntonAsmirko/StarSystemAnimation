@@ -1,10 +1,10 @@
 package com.example.starsystem.views
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -15,7 +15,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-@SuppressLint("CustomViewStyleable")
 class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     var isInfiniteAnimation = false
@@ -200,6 +199,28 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
             curPositionY = parcel.readInt()
         }
 
+        private fun getRotateDrawable(
+            d: Drawable,
+            angle: Float,
+            positionX: Float,
+            positionY: Float
+        ): Drawable? {
+            val arD = arrayOf(d)
+            return object : LayerDrawable(arD) {
+                override fun draw(canvas: Canvas) {
+                    canvas.save()
+                    canvas.rotate(
+                        angle,
+                        positionX,
+                        positionY
+                    )
+                    super.draw(canvas)
+                    canvas.restore()
+                }
+            }
+        }
+
+
         fun draw(canvas: Canvas, makeMove: Boolean = false) {
             val angle = curAngle * Math.PI / 180
             val rotatedX =
@@ -222,7 +243,10 @@ class StarSystemView(context: Context, attrs: AttributeSet) : View(context, attr
                 initPositionX = centerX + offset
                 initPositionY = centerY
             }
-            image.draw(canvas)
+
+            getRotateDrawable(image, curAngle*3, curPositionX.toFloat(), curPositionY.toFloat())!!.draw(canvas)
+
+            //image.draw(canvas)
             view!!.invalidate()
         }
 
